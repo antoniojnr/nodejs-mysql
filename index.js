@@ -6,6 +6,9 @@ const port = 3000;
 const host = "0.0.0.0";
 
 app.get("/", (req, res) => {
+  console.log(
+    `Attempting connection... ${process.env.MYSQL_USER}:${process.env.MYSQL_PASS}@${process.env.MYSQL_HOST}`
+  );
   var con = mysql.createConnection({
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
