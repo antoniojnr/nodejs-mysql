@@ -5,6 +5,10 @@ const app = express();
 const port = 3000;
 const host = "0.0.0.0";
 
+app.get("/test", (req, res) => {
+  res.send("Ok");
+});
+
 app.get("/", (req, res) => {
   console.log(
     `Attempting connection... ${process.env.MYSQL_USER}:${process.env.MYSQL_PASS}@${process.env.MYSQL_HOST}`
@@ -22,5 +26,7 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, host, () => {
-  console.log(`Example app listening on http://${host}:${port}. MySQL database is "${process.env.MYSQL_DATABASE}"`);
+  console.log(
+    `Example app listening on http://${host}:${port}. MySQL settings are: ${process.env.MYSQL_USER}:${process.env.MYSQL_PASS}@${process.env.MYSQL_DATABASE}`
+  );
 });
