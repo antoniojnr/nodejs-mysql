@@ -16,13 +16,14 @@ services:
       - db:/var/lib/mysql
     networks:
       - app-network
+
   node_app:
     build:
       context: .
       dockerfile: Dockerfile
-    image: nodejs:18
+    image: node:18
     container_name: node_app
-    restart: unless-stopped
+    restart: on-failure
     environment:
       - MYSQL_HOST=${MYSQL_HOST}
       - MYSQL_USER=${MYSQL_USER}
@@ -35,8 +36,7 @@ services:
     networks:
       - app-network
     depends_on:
-      mysql_server:
-        condition: service_completed_successfully
+      - mysql_server
     command: node index.js
 
 networks:
