@@ -17,6 +17,27 @@ services:
     networks:
       - app-network
 
+# new
+
+  traefik:
+    image: traefik:v2.3
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    restart: always
+    ports:
+      - "80:3000"
+      - "8081:8080" # The Web UI (enabled by --api)
+    networks:
+      - web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+# new
+
   node_app:
     build:
       context: .
@@ -29,19 +50,26 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASS=${MYSQL_PASS}
     ports:
-      - "80:3000"
+      - "3000:3000"
     volumes:
       - .:/home/node/app
       - node_modules:/home/node/app/node_modules
     networks:
       - app-network
+      - web
     depends_on:
       - mysql_server
     command: node index.js
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
 
 networks:
   app-network:
     driver: bridge
+  web:
+    external: true
 
 volumes:
   node_modules:
